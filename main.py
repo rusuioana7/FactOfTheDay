@@ -1,6 +1,10 @@
-def print_hi(name):
-    print(f'Hi, {name}')
+import GUI
+from GUI.interface import run_app
 
 
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def main():
+    GUI.interface.run_app()
+
+
+if __name__ == "__main__":
+    main()
