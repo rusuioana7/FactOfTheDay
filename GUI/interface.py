@@ -1,130 +1,91 @@
 import tkinter as tk
 
 
-def on_name_click(event):
-    if name_entry.get() == "Enter your name here":
-        name_entry.delete(0, "end")
-        name_entry.config(fg="#c4f1be", justify="center")
-
-
-def on_topic_click(event):
-    if topic_entry.get() == "Enter the topic that you're interested in":
-        topic_entry.delete(0, "end")
-        topic_entry.config(fg="#c4f1be", justify="center")
-
-
-def on_name_focus_out(event):
-    if not name_entry.get():
-        name_entry.insert(0, "Enter your name here")
-        name_entry.config(fg="#c4f1be", justify="center")
-
-
-def on_topic_focus_out(event):
-    if not topic_entry.get():
-        topic_entry.insert(0, "Enter the topic that you're interested in")
-        topic_entry.config(fg="#c4f1be", justify="center")
-
-
-def choose_topic_window():
+def search_result_window():
     user_name = name_entry.get()
-    old_width = root.winfo_width()
-    old_height = root.winfo_height()
-
     root.destroy()
 
     new_window = tk.Tk()
-    new_window.title("Welcome")
+    new_window.title("Search Result")
     new_window.config(bg="#525B76")
-    new_window.geometry(f"{old_width}x{old_height}")
+    new_window.geometry("900x700")
+
 
     greeting_label = tk.Label(new_window, text=f"Welcome, {user_name}!", font=("Souvenir", 30, "bold"), bg="#525B76",
                               fg="#c4f1be")
     greeting_label.pack(pady=30)
 
-    global topic_entry
-    topic_entry = tk.Entry(new_window, font=("Souvenir", 13), bg="#201e50", fg="#c4f1be", width=40, justify="center")
-    topic_entry.insert(0, "Enter the topic that you're interested in")
-    topic_entry.bind("<FocusIn>", on_topic_click)
-    topic_entry.bind("<FocusOut>", on_topic_focus_out)
-    topic_entry.pack(pady=15, padx=5, ipady=5)
+    about_label = tk.Label(new_window, text="Newest article about ... :", font=("Souvenir", 16), bg="#525B76", fg="#c4f1be")
+    about_label.place(relx=0.5, rely=0.5, anchor="center", x=-300, y=-200)
 
-    submit_button = tk.Button(new_window, text="Submit", bg="#201e50", fg="#c4f1be", command=choose_topic_window,
-                              width=12, height=1)
-    submit_button.pack(pady=5)
+    #search result
+    result_frame = tk.Frame(new_window, bg="#c4f1be", bd=5)
+    result_frame.place(relx=0.5, rely=0.5, relwidth=0.7, relheight=0.5, anchor="center")
 
-    explore_label_button = tk.Label(new_window, text="Explore more topics", font=("Souvenir", 15, "bold"),
-                                  bg="#525B76", fg="#c4f1be")
-    explore_label_button.pack(pady=30, padx=50, anchor=tk.W)
+    title_label = tk.Label(result_frame, text="Title", font=("Souvenir", 24, "bold"), bg="#c4f1be", fg="#525B76")
+    title_label.grid(row=0, column=0, columnspan=2, pady=10)
 
-    label_frame_list = ["Politics", "Technology", "Health", "Business", "Environment",
-                        "Entertainment", "Sports", "Science", "Education", "Lifestyle",
-                        "Food", "Fashion", "Art", "Literature", "Tourism"]
+    description_label = tk.Label(result_frame, text="Description", font=("Souvenir", 16), bg="#c4f1be",
+                                 fg="#525B76")
+    description_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
 
-    checkbox_texts = [
-        ["Politics", ["Elections", "Policies", "Geopolitical issues", "Diplomatic relations"]],
-        ["Technology", ["Gadgets", "Software", "Cybersecurity", "AI", "Tech companies"]],
-        ["Health", ["Public health issues", "pharmaceuticals", "treatments", "Pandemy", "diseases"]],
-        ["Business", ["economy", "stock markets", "entrepreneurship", "Marketing", "Cryptocurrency"]],
-        ["Environment", ["climate change", "natural disasters", "Ecology", "Pollution", "Sustainability"]],
-        ["Entertainment", ["Music", "Movies", "TV Shows", "awards", "celebrities"]],
-        ["Sports", ["Athletes", "Sports Events", "Tennis", "Soccer", "Sports Teams"]],
-        ["Science", ["astronomy", "biology", "physics", "chemistry", "discovery"]],
-        ["Lifestyle", ["Hobbies", "personal development", "journaling", "fitness", "Relationships"]],
-        ["Food", ["restaurant reviews", "culinary trends", "recipies", "nutrition", "calorie deficit"]],
-        ["Social", ["human rights", "activism", "ONG", "discrimination", "equality"]],
-        ["Art", ["art exhibitions", "art history", "museums"]],
-        ["Literature", ["poetry", "bestseller lists", "book releases", "biography", "author interviews"]],
-        ["Tourism", ["travel tips", "airline news", "tourist attractions", "travel destinations"]],
-    ]
+    image_path = "C:\\Users\\ioana\\OneDrive\\Pictures\\Capturi de ecran\\Screenshot 2023-03-25 155833.png"
+    img = tk.PhotoImage(file=image_path)
+    img = img.subsample(4)
+    image_label = tk.Label(result_frame, image=img)
+    image_label.image = img
+    image_label.grid(row=1, column=1, padx=10, pady=10, sticky="e")
 
-    for label, options in checkbox_texts:
-        label_frame = tk.Frame(new_window, bg="#525B76")
-        label_frame.pack(pady=5, padx=50, anchor=tk.W)
-        tk.Label(label_frame, text=label, font=("Souvenir", 15, "bold"), bg="#525B76", fg="#c4f1be").pack(pady=10,
-                                                                                                          padx=20,
-                                                                                                          anchor=tk.W)
-        label_frame_list.append(label_frame)
+    timestamp_label = tk.Label(new_window, text="Time until next article about ... : ...", font=("Souvenir", 16), bg="#525B76",
+                            fg="#c4f1be")
+    timestamp_label.place(relx=0.5, rely=0.5, anchor="center", x=-250, y=200)
 
-        checkbox_frame = tk.Frame(label_frame, bg="#525B76")
-        checkbox_frame.pack(anchor=tk.CENTER)
+    new_window.mainloop()
 
-        checkbox_var = [tk.BooleanVar() for _ in range(len(options))]
-
-        column_num = 5
-        row = 0
-        col = 0
-        for i, text in enumerate(options):
-            checkbox = tk.Checkbutton(checkbox_frame, text=text, selectcolor="#c4f1be", variable=checkbox_var[i],
-                                      bg="#201e50", fg="#c4f1be",
-                                      font=("Souvenir", 12), height=1, width=20)
-            checkbox.grid(row=row, column=col, padx=10, pady=5)
-            col += 1
-            if col == column_num:
-                col = 0
-                row += 1
 
 def run_app():
     global root
     root = tk.Tk()
     root.title("News App")
     root.config(bg="#525B76")
-    root.geometry("800x500")
+    root.geometry("900x700")
 
-    title_label = tk.Label(root, text="Fact of the day", font=("Souvenir", 30, "bold"), bg="#525B76", fg="#c4f1be")
+    title_label = tk.Label(root, text="Fact of the day", font=("Souvenir", 35, "bold"), bg="#525B76", fg="#c4f1be")
     title_label.pack(pady=20)
 
-    global name_entry
-    name_entry = tk.Entry(root, font=("Souvenir", 13), bg="#201e50", fg="#c4f1be", width=20, justify="center")
-    name_entry.insert(0, "Enter your name here")
-    name_entry.bind("<FocusIn>", on_name_click)
-    name_entry.bind("<FocusOut>", on_name_focus_out)
-    name_entry.pack(pady=15, padx=5, ipady=5)
+    name_label = tk.Label(root, text="Your name:", font=("Souvenir", 18), bg="#525B76", fg="#c4f1be")
+    name_label.pack(pady=(30, 5))
 
-    continue_button = tk.Button(root, text="Continue", bg="#201e50", fg="#c4f1be", command=choose_topic_window, width=12,
-                                height=1)
-    continue_button.pack(pady=11)
+    global name_entry
+    name_entry = tk.Entry(root, font=("Souvenir", 15), bg="#201e50", fg="#c4f1be", width=20, justify="center")
+    name_entry.insert(0, "")
+    name_entry.pack(pady=5)
+
+    topic_label = tk.Label(root,
+                           text="Topic/Topics that your interested in (e.g. astronomy, politics, climate change, ...):",
+                           font=("Souvenir", 18), bg="#525B76", fg="#c4f1be")
+    topic_label.pack(pady=(20, 5))
+
+    global topic_entry
+    topic_entry = tk.Entry(root, font=("Souvenir", 15), bg="#201e50", fg="#c4f1be", width=40, justify="center")
+    topic_entry.insert(0, "")
+    topic_entry.pack(pady=5)
+
+    additional_label = tk.Label(root, text="Time interval between news (5 minutes default):", font=("Souvenir", 18),
+                                bg="#525B76", fg="#c4f1be")
+    additional_label.pack(pady=(20, 5))
+
+    global additional_entry
+    additional_entry = tk.Entry(root, font=("Souvenir", 15), bg="#201e50", fg="#c4f1be", width=20, justify="center")
+    additional_entry.insert(0, "")
+    additional_entry.pack(pady=5)
+
+    continue_button = tk.Button(root, text="Submit", bg="#201e50", fg="#c4f1be", command=search_result_window,
+                                width=12, height=1)
+    continue_button.pack(pady=20)
 
     root.mainloop()
+
 
 if __name__ == "__main__":
     run_app()
