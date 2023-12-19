@@ -36,7 +36,7 @@ def fetch_description(url):
             if paragraphs:
                 for paragraph in paragraphs:
                     first_sentence = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', paragraph.get_text())[0]
-                    if 'cookies' not in first_sentence and 'ad blocker' not in first_sentence:
+                    if 'cookies' not in first_sentence or 'ad blocker' not in first_sentence or 'cookie' not in first_sentence or 'policies' not in first_sentence:
                         return ' '.join(filter(None, map(lambda x: x.strip(), first_sentence.splitlines())))
                 return "No suitable sentence found"
             else:
@@ -78,7 +78,7 @@ def fetch_news(keyword, max_articles=10):
     return all_news
 
 
-keyword_to_search = "biology"
+keyword_to_search = "astronomy"
 news_list = fetch_news(keyword_to_search, max_articles=10)
 
 for news in news_list:
