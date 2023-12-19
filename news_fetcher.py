@@ -45,6 +45,7 @@ def fetch_description(url):
             print(f"Error extracting article with BeautifulSoup: {ex}")
             return None
 
+
 def fetch_news(keyword, max_articles=10):
     all_news = []
 
@@ -65,12 +66,22 @@ def fetch_news(keyword, max_articles=10):
 
         summary = fetch_description(article_url)
 
+        published_date = entry.get('published', '')
+        if published_date:
+            try:
+                parsed_date = entry.published_parsed
+                published_date = f"{parsed_date.tm_year}-{parsed_date.tm_mon:02d}-{parsed_date.tm_mday:02d}"
+            except Exception as e:
+                print(f"Error parsing published date: {e}")
+                published_date = ''
+
         news_info = {
             'title': title,
             'description': summary,
             'image_url': image_url,
             'article_url': article_url,
-            'source': source_name
+            'source': source_name,
+            'published_date': published_date
         }
 
         all_news.append(news_info)
@@ -78,13 +89,14 @@ def fetch_news(keyword, max_articles=10):
     return all_news
 
 
-keyword_to_search = "astronomy"
-news_list = fetch_news(keyword_to_search, max_articles=10)
-
-for news in news_list:
-    print("Title:", news['title'])
-    print("Description:", news['description'])
-    print("Article URL:", news['article_url'])
-    print("Source:", news['source'])
-    print("Image URL:", news['image_url'])
-    print("\n")
+# keyword_to_search = "astronomy"
+# news_list = fetch_news(keyword_to_search, max_articles=1)
+#
+# for news in news_list:
+#     print("Title:", news['title'])
+#     print("Description:", news['description'])
+#     print("Article URL:", news['article_url'])
+#     print("Source:", news['source'])
+#     print("Published Date:", news['published_date'])
+#     print("Image URL:", news['image_url'])
+#     print("\n")
