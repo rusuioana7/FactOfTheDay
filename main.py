@@ -11,32 +11,17 @@ def search_result_window():
     topic = topic_entry.get()
     root.destroy()
 
-    # create new window
     new_window = tk.Tk()
     new_window.title("Search Result")
     new_window.config(bg="#525B76")
     new_window.geometry("1100x700")
-    # welcome
-    greeting_label = tk.Label(new_window, text=f"Welcome, {user_name}!", font=("Souvenir", 30, "bold"), bg="#525B76",
-                              fg="#c4f1be")
-    greeting_label.pack(pady=30)
-    # about
-    about_label = tk.Label(new_window, text=f"Newest article about {topic}:", font=("Souvenir", 16), bg="#525B76",
-                           fg="#c4f1be")
-    about_label.place(relx=0.5, rely=0.5, anchor="center", x=-300, y=-200)
 
-    # function for timer(default 60 sec)
-    def countdown(count):
-        timestamp_label.config(text=f"Time until next article about {topic}: {count} seconds")
-        if count > 0:
-            new_window.after(1000, countdown, count - 1)
-        else:
-            timestamp_label.config(text=f"Fetching new articles about {topic}...")
-            search_result_window()
+    news_list = fetch_news(topic, max_articles=5)
+    current_news_index = 0
 
-    # getting news using the fetcher
-    news_list = fetch_news(topic, max_articles=1)
-    for news in news_list:
+    def display_news(news):
+        nonlocal current_news_index
+        global result_frame
         result_frame = tk.Frame(new_window, bg="#c4f1be", bd=5)
         result_frame.place(relx=0.5, rely=0.5, relwidth=0.7, relheight=0.5, anchor="center")
         # title
@@ -83,11 +68,37 @@ def search_result_window():
             default_img_label = tk.Label(result_frame, image=default_img)
             default_img_label.image = default_img
             default_img_label.grid(row=1, column=0, pady=10, rowspan=2, sticky="e")
-    # timer
+
+    def countdown(count):
+        nonlocal current_news_index
+        global result_frame
+        timestamp_label.config(text=f"Time until next article about {topic}: {count} seconds")
+        if count > 0:
+            new_window.after(1000, countdown, count - 1)
+        else:
+            timestamp_label.config(text=f"Fetching new articles about {topic}...")
+
+            current_news_index = (current_news_index + 1) % len(news_list)
+            for widget in result_frame.winfo_children():
+                widget.destroy()
+
+            display_news(news_list[current_news_index])
+
+            countdown(60)
+
+    greeting_label = tk.Label(new_window, text=f"Welcome, {user_name}!", font=("Souvenir", 30, "bold"), bg="#525B76",
+                              fg="#c4f1be")
+    greeting_label.pack(pady=30)
+
+    about_label = tk.Label(new_window, text=f"Newest article about {topic}:", font=("Souvenir", 16), bg="#525B76",
+                           fg="#c4f1be")
+    about_label.place(relx=0.5, rely=0.5, anchor="center", x=-300, y=-200)
+
     timestamp_label = tk.Label(new_window, text=f"Time until next article about {topic} :", font=("Souvenir", 16),
                                bg="#525B76", fg="#c4f1be")
     timestamp_label.place(relx=0.5, rely=0.5, anchor="center", x=-250, y=200)
 
+    display_news(news_list[current_news_index])
     countdown(60)
 
     new_window.mainloop()
