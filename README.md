@@ -1,0 +1,1 @@
+A Python-based GUI application designed to provide users with regular updates on various topics of interest such as astronomy, biology, medicine, etc. The application fetches the latest articles from reputable websites and displays them in the user interface, made using tkinter. It uses the Google News API to gather news articles based on user-defined categories.
